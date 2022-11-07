@@ -5,7 +5,6 @@
 
 typedef unsigned char bit;
 typedef unsigned char gray;
-typedef signed short gradient;
 
 char pm_getc(FILE *file);
 bit pm_getbit(FILE *file);
