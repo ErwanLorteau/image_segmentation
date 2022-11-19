@@ -47,8 +47,8 @@ void init_guard(int argc){
 
 void init_centers(int* centers, int k, int cols, int rows, int maxval){
 
-    for(int i=0; i<k; i++){
-        //Check if center coordinates are not repeated
+    int i;
+    for(i=0; i<k; i++){
         centers[i*5] = rand()%rows;
         centers[i*5+1] = rand()%cols;
         centers[i*5+2] = rand()%maxval;
