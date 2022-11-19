@@ -118,11 +118,11 @@ int compute_means(gray* centers, int* cluster_assoc, gray* rgb_map, int k, int c
                 centers[m*3] = rmoy/nb;
                 break_iteration = 0;
             }
-            if (centers[m*3+1] == gmoy/nb){
+            if (centers[m*3+1] != gmoy/nb){
                 centers[m*3+1] = gmoy/nb;
                 break_iteration = 0;
             }
-            if (centers[m*3+2] == gmoy/nb){
+            if (centers[m*3+2] != gmoy/nb){
                 centers[m*3+2] = bmoy/nb;
                 break_iteration = 0;
             }
@@ -150,7 +150,6 @@ void writeInFile(FILE *fp, gray* centers, int* cluster_assoc, int nbCols, int nb
     /* Closing */
     fclose(fp);
 }
-
 
 /***Output functions***/
 FILE *createFile(char *name) {
