@@ -1,4 +1,6 @@
 #include "Util.h"
+#include <time.h>
+#include <stdlib.h>
 #include <math.h>
 
 gray* readPPM(FILE* ifp, int* cols, int* rows, int* maxval){
@@ -43,19 +45,12 @@ void init_guard(int argc){
     }
 }
 
-void init_centers(gray* centers, int k){
-    // For testing purposes, to be changed to random
-    if (k==3){
-        centers[0] = 100;
-        centers[1] = 39;
-        centers[2] = 93;
-        centers[3] = 91;
-        centers[4] = 120;
-        centers[5] = 212;
-        centers[6] = 10;
-        centers[7] = 144;
-        centers[8] = 3;
+void init_centers(gray* centers, int k, int maxval){
+
+    for(int i=0; i<k*3; i++){
+        centers[i] = rand()%maxval;
     }
+
 }
 
 FILE* open_image(char* file){
@@ -74,7 +69,7 @@ double distance(gray r2, gray r1, gray g2, gray g1, gray b2, gray b1){
 void compute_association(gray* rgb_map, gray* centers, int* cluster_assoc, int rows, int cols, int k){
 
     gray r,g,b;
-    int i, j, m, n, min_index;
+    int i, j, m, min_index;
     double curr_distance, min;
 
     for(i=0; i < rows; i++){
@@ -91,7 +86,7 @@ void compute_association(gray* rgb_map, gray* centers, int* cluster_assoc, int r
                 min = curr_distance;
             }
         }
-        cluster_assoc[i * cols + j] = m;
+        cluster_assoc[i * cols + j] = min_index;
       }
     }     
 }
@@ -172,8 +167,13 @@ int main(int argc, char* argv[]){
     FILE* image;
     gray* rgb_map;
     int k, cols, rows, maxval, break_iteration, max_iterations, i;
+    time_t seed;
 
     init_guard(argc);
+
+    //seed = time(NULL);
+    srand(1668869384);
+    //printf("%ld",seed);
 
     image = open_image(argv[1]);
 
@@ -183,16 +183,18 @@ int main(int argc, char* argv[]){
     max_iterations = atoi(argv[3]);
 
     gray* centers = (gray*)malloc(3*k);
-    init_centers(centers, k);
+    init_centers(centers, k, maxval);
 
     int* cluster_assoc = (int*)malloc(sizeof(int)*cols*rows);
 
     i = 0;
-    while(i<max_iterations && break_iteration){
+    break_iteration = 0;
+    while(i<max_iterations && !break_iteration){
         compute_association(rgb_map, centers, cluster_assoc, rows, cols, k);
         break_iteration = compute_means(centers, cluster_assoc, rgb_map, k, cols, rows);
         i++;
     }
+    printf("%d\n",i);
 
     /**Creating an output file**/
     FILE* newImage = createFile("result.ppm");
